@@ -1,11 +1,14 @@
-// To create a API model using https://app.quicktype.io/
+// To parse this JSON data, do
+//
+//     final attendance = attendanceFromMap(jsonString);
+
+import 'package:meta/meta.dart';
 import 'dart:convert';
 
 Attendance attendanceFromMap(String str) =>
-    Attendance.fromMap(json.decode(str)); // decode our json data
+    Attendance.fromMap(json.decode(str));
 
-String attendanceToMap(Attendance data) =>
-    json.encode(data.toMap()); // and convert to object
+String attendanceToMap(Attendance data) => json.encode(data.toMap());
 
 class Attendance {
   Attendance({
@@ -26,28 +29,30 @@ class Attendance {
 class Datum {
   Datum({
     required this.attendanceDate,
-    required this.attendanceDetails,
+    required this.forenoon,
+    required this.afternoon,
   });
 
   final DateTime attendanceDate;
-  final List<AttendanceDetail> attendanceDetails;
+  final Noon forenoon;
+  final Noon afternoon;
 
   factory Datum.fromMap(Map<String, dynamic> json) => Datum(
         attendanceDate: DateTime.parse(json["attendanceDate"]),
-        attendanceDetails: List<AttendanceDetail>.from(
-            json["attendanceDetails"].map((x) => AttendanceDetail.fromMap(x))),
+        forenoon: Noon.fromMap(json["forenoon"]),
+        afternoon: Noon.fromMap(json["afternoon"]),
       );
 
   Map<String, dynamic> toMap() => {
         "attendanceDate":
             "${attendanceDate.year.toString().padLeft(4, '0')}-${attendanceDate.month.toString().padLeft(2, '0')}-${attendanceDate.day.toString().padLeft(2, '0')}",
-        "attendanceDetails":
-            List<dynamic>.from(attendanceDetails.map((x) => x.toMap())),
+        "forenoon": forenoon.toMap(),
+        "afternoon": afternoon.toMap(),
       };
 }
 
-class AttendanceDetail {
-  AttendanceDetail({
+class Noon {
+  Noon({
     required this.session,
     required this.status,
     required this.reason,
@@ -57,8 +62,7 @@ class AttendanceDetail {
   final int status;
   final String reason;
 
-  factory AttendanceDetail.fromMap(Map<String, dynamic> json) =>
-      AttendanceDetail(
+  factory Noon.fromMap(Map<String, dynamic> json) => Noon(
         session: json["session"],
         status: json["status"],
         reason: json["reason"],
